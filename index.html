@@ -10,9 +10,32 @@
 </head>
 <body>
 
+    <!-- Navigation Bar -->
+    <header id="navbar">
+        <div class="container nav-container">
+            <a href="#home" class="logo">NeoLive</a>
+            <nav class="nav-links">
+                <button class="nav-toggle" aria-label="메뉴 토글">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul>
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#about">연구소 소개</a></li>
+                    <li><a href="#vision">핵심 가치</a></li>
+                    <li><a href="#programs">주요 프로그램</a></li>
+                    <li><a href="#age-groups">연령별 서비스</a></li>
+                    <li><a href="#recommendations">추천 대상</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#location">오시는 길</a></li>
+                    <li><a href="#contact">문의하기</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
     <!-- Hero Section -->
     <div id="hero-container">
-        <section id="home" class="hero">
+        <section id="home" class="hero section"> {/* section 클래스 추가 */}
             <div class="hero-content">
                 <h1 class="fade-in-delay-1">
                     <span class="highlight">균형잡힌 뇌</span>가<br> <span class="highlight">건강한 삶</span>을 만듭니다
@@ -231,7 +254,7 @@
             <p class="text-center text-text-light mb-12 max-w-3xl mx-auto">
                 유아기부터 노년기까지, 각 생애 주기에 맞는 최적화된 브레인 코칭 솔루션을 만나보세요.
             </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 age-grid">
+            <div class="age-grid"> {/* Removed grid-cols classes, will be handled by flexbox */}
                 <div class="age-card fade-in">
                     <img src="https://raw.githubusercontent.com/neolive91/neolive-site/refs/heads/main/kids.webp" alt="아동" class="age-img">
                     <div class="age-content">
@@ -517,15 +540,17 @@
                 </div>
                 <div class="form-group">
                     <label for="subject" class="form-label">문의 유형</label>
-                    <select id="subject" name="subject" class="form-control" required>
-                        <option value="" disabled selected>문의 유형을 선택하세요</option>
-                        <option value="뇌기능 분석 문의">뇌기능 분석 문의</option>
-                        <option value="맞춤 코칭 문의">맞춤 코칭 문의</option>
-                        <option value="심리 치유 문의">심리 치유 문의</option>
-                        <option value="뇌 활성화 훈련 문의">뇌 활성화 훈련 문의</option>
-                        <option value="비용 문의">비용 문의</option>
-                        <option value="기타 문의">기타 문의</option>
-                    </select>
+                    <div class="custom-select-wrapper">
+                        <select id="subject" name="subject" class="form-control custom-select" required>
+                            <option value="" disabled selected>문의 유형을 선택하세요</option>
+                            <option value="뇌기능 분석 문의">뇌기능 분석 문의</option>
+                            <option value="맞춤 코칭 문의">맞춤 코칭 문의</option>
+                            <option value="심리 치유 문의">심리 치유 문의</option>
+                            <option value="뇌 활성화 훈련 문의">뇌 활성화 훈련 문의</option>
+                            <option value="비용 문의">비용 문의</option>
+                            <option value="기타 문의">기타 문의</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="message" class="form-label">문의 내용</label>
@@ -542,7 +567,50 @@
         </div>
     </section>
 
+    <!-- Footer -->
+    <footer id="footer" class="section">
+        <div class="container">
+            <p>© 2024 네오리브 브레인코칭연구소. All Rights Reserved.</p>
+            <p>문의: <a href="tel:010-8212-6983">010-8212-6983</a> | <a href="mailto:neolive91@gmail.com">neolive91@gmail.com</a></p>
+        </div>
+    </footer>
+
 <script>
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+            // Adjust for fixed navbar height if necessary
+            const navbarHeight = document.getElementById('navbar') ? document.getElementById('navbar').offsetHeight : 0;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+            // Close mobile menu if open
+            const nav = document.querySelector('.nav-links');
+            if (nav.classList.contains('active')) {
+                nav.classList.remove('active');
+            }
+        }
+    });
+});
+
+// Mobile Navigation Toggle
+const navToggle = document.querySelector('.nav-toggle');
+const navLinks = document.querySelector('.nav-links');
+if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+}
+
+
 // Programs Tab Script
 (function() {
     var tabs = document.querySelectorAll('.program-tab');
@@ -554,6 +622,7 @@
         });
         contents.forEach(function(content) {
             content.style.display = 'none';
+            content.classList.remove('fade-in-active'); // Animation class
         });
 
         var targetTab = document.querySelector(`.program-tab[data-tab="${tabId}"]`);
@@ -564,10 +633,9 @@
         }
         if (targetContent) {
             targetContent.style.display = 'block';
-            // Ensure fade-in animation restarts if needed
-            targetContent.classList.remove('fade-in');
+            // Ensure fade-in animation restarts
             void targetContent.offsetWidth; // Trigger reflow
-            targetContent.classList.add('fade-in');
+            targetContent.classList.add('fade-in-active'); // Use a specific class for tab content animation
         }
     }
 
@@ -576,9 +644,10 @@
 
     if (activeTabFromUrl && document.querySelector(`.program-tab[data-tab="${activeTabFromUrl}"]`)) {
         showTab(activeTabFromUrl);
-    } else {
-        showTab('brain-analysis'); // Default tab
+    } else if (tabs.length > 0 && contents.length > 0) { // Check if tabs exist
+        showTab(tabs[0].getAttribute('data-tab')); // Default to first tab
     }
+
 
     tabs.forEach(function(tab) {
         tab.onclick = function() {
@@ -603,13 +672,14 @@
             question.addEventListener('click', function() {
                 var isActive = item.classList.contains('active');
                 
-                // Optional: Close other FAQ items when one is opened
-                // faqItems.forEach(function(otherItem) {
-                //     if (otherItem !== item) {
-                //         otherItem.classList.remove('active');
-                //     }
-                // });
+                // Close all other items
+                faqItems.forEach(function(otherItem) {
+                    if (otherItem !== item) { // Don't close the one being clicked
+                        otherItem.classList.remove('active');
+                    }
+                });
                 
+                // Toggle current item
                 if (isActive) {
                     item.classList.remove('active');
                 } else {
